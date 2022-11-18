@@ -5,14 +5,11 @@ plugins {
 
 android {
     namespace 'com.srk.srklocation'
-    compileSdk 33
+    compileSdkVersion buildConfig.compileSdk
 
     defaultConfig {
         applicationId "com.srk.srklocation"
-        minSdk 21
-        targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        minSdk buildConfig.minSdk
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val srkLocationBuilder = SRKLocationBuilder()
-        srkLocationBuilder.googleApiKey("AIzaSyCYX8N_hZoyGVtM-4CsGit8zLPVb9aTNCk")
+        srkLocationBuilder.googleApiKey("AIzaSyCYX8N_hZoyGVtM-4CsGit8zLPVb9aTNCks")
         srkLocationBuilder.locationLatLng(18.294830, 83.89366)
         srkLocationBuilder.radius(1)
         /*  srkLocationBuilder.language("in")
