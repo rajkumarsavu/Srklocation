@@ -23,6 +23,10 @@ object AppConstants {
     const val RADIUS_CANT_BE_LESSER = "Radius  cannot be less than 1"
     const val RANK_CAN_ONLY = "Rank By can only be 'distance' or 'prominence'"
 
+    const val PLACE_ID_REQUIRED = "Place Id required"
+
 
     const val SOMETHING_WENT_WRONG = "Something went wrong"
+    const val OK = "OK"
+
 }

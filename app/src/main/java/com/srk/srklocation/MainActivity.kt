@@ -13,17 +13,23 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        getNearByPlaces()
+
+    }
+
+    private fun getNearByPlaces() {
+
         val srkLocationBuilder = SRKLocationBuilder()
-        srkLocationBuilder.googleApiKey("AIzaSyCYX8N_hZoyGVtM-4CsGit8zLPVb9aTNCks")
-        srkLocationBuilder.locationLatLng(18.294830, 83.89366)
+        srkLocationBuilder.googleApiKey("your api key")
+        srkLocationBuilder.locationLatLng(0.0, 0.0)
         srkLocationBuilder.radius(1)
         /*  srkLocationBuilder.language("in")
           srkLocationBuilder.minPrice(3)
           srkLocationBuilder.maxPrice(4)
           srkLocationBuilder.type("gas_station")*/
 
-        srkLocationBuilder.onLocationResultListner(object : OnLocationResultListner {
-            override fun onPlaceDetailsFetched(locationResponse: LocationResponse) {
+        srkLocationBuilder.onLocationResultListener(object : OnLocationResultListner {
+            override fun onLocationDetailsFetched(locationResponse: LocationResponse) {
                 when (locationResponse.networkStatus) {
                     LocationNetworkStatus.LOADING -> {
                         Toast.makeText(this@MainActivity, "loading", Toast.LENGTH_SHORT).show()

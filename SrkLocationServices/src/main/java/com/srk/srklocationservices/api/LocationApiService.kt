@@ -1,6 +1,7 @@
 package com.srk.srklocationservices.api
 
-import com.app.joulez.networklibrary.models.response.location.NearBySearchResponse
+import com.srk.srklocationservices.models.nearbyplaces.NearBySearchResponse
+import com.srk.srklocationservices.models.placedetails.PlaceDetailsResponse
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
@@ -17,7 +18,7 @@ interface LocationApiService {
     fun getNearPlaces(@Url url: String?): Call<NearBySearchResponse>
 
     @GET
-    fun getPlaceDetailsByPlaceId(@Url url: String?): Response<ResponseBody>
+    fun getPlaceDetailsByPlaceId(@Url url: String?): Call<PlaceDetailsResponse>
 
 
 }

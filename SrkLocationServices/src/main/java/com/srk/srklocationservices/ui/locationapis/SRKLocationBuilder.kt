@@ -1,6 +1,7 @@
 package com.srk.srklocationservices.ui.locationapis
 
 import com.srk.srklocationservices.listners.OnLocationResultListner
+import com.srk.srklocationservices.ui.locationapis.nearbysearch.SRKGoogleNearPlacesAPI
 
 //FYI Note: Adding both `keyword` and `type` with the same value (`keyword=cafe&type=cafe` or `keyword=parking&type=parking`)
 // can yield `ZERO_RESULTS`.
@@ -40,6 +41,7 @@ class SRKLocationBuilder {
      * OPTIONAL
      * the language code, indicating in which language the results should be returned,
      * https://developers.google.com/maps/documentation/places/web-service/search-nearby#language
+     * https://developers.google.com/maps/documentation/places/web-service/details#language
      */
     private var language: String? = null
     fun getLanguage() = language
@@ -113,9 +115,72 @@ class SRKLocationBuilder {
     private var type: String? = null
     fun getType() = type
 
+    private var needResultInPlaceModelList: Boolean = false
+    fun getNeedResultInPlaceModelList() = needResultInPlaceModelList
+
+    //=====================Place Details========
+
+    /**
+     * Required
+     * A textual identifier that uniquely identifies a place, returned from a Place Search
+     * https://developers.google.com/maps/documentation/places/web-service/details#place_id
+     */
+    private var placeId: String? = null
+    fun getPlaceId() = placeId
+
+    /**
+     * OPTIONAL
+     * Use the fields parameter to specify a comma-separated list of place data types to return
+     *  For example: fields=formatted_address,name,geometry.
+     *  Use a forward slash when specifying compound values. For example: opening_hours/open_now.
+     *  https://developers.google.com/maps/documentation/places/web-service/details#fields
+     */
+    private var fields: String? = null
+    fun getFields() = fields
+
+    /**
+     * OPTIONAL
+     * The region code, specified as a ccTLD ("top-level domain") two-character value.
+     * https://developers.google.com/maps/documentation/places/web-service/details#region
+     */
+    private var region: String? = null
+    fun getRegion() = region
+
+    /**
+     * OPTIONAL
+     * Specify reviews_no_translations=true to disable translation of reviews;
+     * specify reviews_no_translations=false to enable translation of reviews.
+     * Reviews are returned in their original language.
+     * https://developers.google.com/maps/documentation/places/web-service/search-nearby#pagetoken
+     */
+    private var reviewsNoTranslations: Boolean? = null
+    fun getReviewsNoTranslations() = reviewsNoTranslations
+
+    /**
+     * OPTIONAL
+     * The sorting method to use when returning reviews. Can be set to most_relevant (default) or newest.
+     * most_relevant(default), reviews are sorted by relevance; the service will bias the results to return reviews originally written in the preferred language.
+     * newest reviews are sorted in chronological order; the preferred language does not affect the sort order.
+     * https://developers.google.com/maps/documentation/places/web-service/details#reviews_sort
+     */
+    private var reviewsSort: String? = null
+    fun getReviewsSort() = reviewsSort
+
+    /**
+     * OPTIONAL
+     * A random string which identifies an autocomplete session for billing purposes.
+     * https://developers.google.com/maps/documentation/places/web-service/details#sessiontoken
+     */
+    private var sessiontoken: String? = null
+    fun getSessiontoken() = sessiontoken
+
+    private var needPlaceDetailsResultInPlaceModel: Boolean = false
+    fun getNeedPlaceDetailsResultInPlaceModel() = needPlaceDetailsResultInPlaceModel
+
     private var onLocationResultListner: OnLocationResultListner? = null
     fun getLocationResultListner() = onLocationResultListner
 
+    //============= Near by search API===================
     fun googleApiKey(key: String?): SRKLocationBuilder {
         googleKey = key
         return this
@@ -172,14 +237,60 @@ class SRKLocationBuilder {
         return this
     }
 
-    fun onLocationResultListner(onLocationResultListnerValue: OnLocationResultListner): SRKLocationBuilder {
-        onLocationResultListner = onLocationResultListnerValue
+    fun needResultInPlaceModelList(fomatedList: Boolean): SRKLocationBuilder {
+        needResultInPlaceModelList = fomatedList
         return this
     }
+
+    //============= Place details API===================
+    fun placeId(placeIdVal: String): SRKLocationBuilder {
+        placeId = placeIdVal
+        return this
+    }
+
+    fun fields(fieldsVal: String?): SRKLocationBuilder {
+        fields = fieldsVal
+        return this
+    }
+
+    fun region(regionVal: String?): SRKLocationBuilder {
+        region = regionVal
+        return this
+    }
+
+    fun reviewsNoTranslations(reviewsNoTranslationsVal: Boolean): SRKLocationBuilder {
+        reviewsNoTranslations = reviewsNoTranslationsVal
+        return this
+    }
+
+    fun reviewsSort(reviewsSortValue: String?): SRKLocationBuilder {
+        reviewsSort = reviewsSortValue
+        return this
+    }
+
+    fun sessiontoken(sessiontokenValue: String?): SRKLocationBuilder {
+        sessiontoken = sessiontokenValue
+        return this
+    }
+
+    fun needPlaceDetailsResultInPlaceModel(fomatedList: Boolean): SRKLocationBuilder {
+        needResultInPlaceModelList = fomatedList
+        return this
+    }
+    //========================================
+
+    fun onLocationResultListener(onLocationResultListenerValue: OnLocationResultListner): SRKLocationBuilder {
+        onLocationResultListner = onLocationResultListenerValue
+        return this
+    }
+
 
     fun buildNearPlaces(): SRKGoogleNearPlacesAPI {
         return SRKGoogleNearPlacesAPI(this)
     }
 
+    fun buildPlaceDetails(): SRKGoogleNearPlacesAPI {
+        return SRKGoogleNearPlacesAPI(this)
+    }
 
 }

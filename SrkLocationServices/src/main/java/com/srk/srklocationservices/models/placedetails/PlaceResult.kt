@@ -1,10 +1,10 @@
 package com.srk.srklocationservices.models.placedetails
 
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
 import com.srk.srklocationservices.models.common.AddressComponent
 import com.srk.srklocationservices.models.common.Geometry
 import com.srk.srklocationservices.models.common.Photo
-import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
 
 class PlaceResult {
     @SerializedName("address_components")

@@ -4,13 +4,13 @@ import android.text.TextUtils
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.srk.srklocationservices.models.common.CommonResponse
-import com.srk.srklocationservices.models.common.LocationResponse
 import com.srk.srklocationservices.models.common.LocationNetworkStatus
-import com.srk.srklocationservices.utils.AppConstants
+import com.srk.srklocationservices.models.common.LocationResponse
 import com.srk.srklocationservices.utils.AppConstants.GOOGLE_KEY_NOT_FOUND
 import com.srk.srklocationservices.utils.AppConstants.INVALID_LANGUAGE
 import com.srk.srklocationservices.utils.AppConstants.LATITUDE_REQUIRED
 import com.srk.srklocationservices.utils.AppConstants.LONGITUDE_REQUIRED
+import com.srk.srklocationservices.utils.AppConstants.PLACE_ID_REQUIRED
 import com.srk.srklocationservices.utils.AppConstants.PRICE_GRATER_THAN_ZERO
 import com.srk.srklocationservices.utils.AppConstants.PRICE_LESS_THAN_FOUR
 import com.srk.srklocationservices.utils.AppConstants.PRICE_MIN_MAX
@@ -26,6 +26,8 @@ import java.util.*
 
 open class GooglePlacesAPI(val srkLocationBuilder: SRKLocationBuilder) {
     protected var PARAM_GOOGLE_KEY = "key="
+
+    //======Near By Search API======
     protected var PARAM_LOCATION = "location="
     protected var PARAM_LANGUAGE = "language="
     protected var PARAM_MINPRICE = "minprice="
@@ -36,6 +38,14 @@ open class GooglePlacesAPI(val srkLocationBuilder: SRKLocationBuilder) {
     protected var PARAM_RANK_BY = "rankby="
     protected var PARAM_KEYWORD = "keyword="
     protected var PARAM_TYPE = "type="
+
+    //======Place Details API======
+    protected var PARAM_PLACE_ID = "place_id="
+    protected var PARAM_FIELDS = "fields="
+    protected var PARAM_REGION = "region="
+    protected var PARAM_REVIEWS_NO_TRANSLATIONS = "reviews_no_translations ="
+    protected var PARAM_REVIEWS_SORT = "reviews_sort="
+    protected var PARAM_SESSIONTOKEN = "sessiontoken="
 
     fun loading() = LocationResponse(
         networkStatus = LocationNetworkStatus.LOADING
@@ -177,6 +187,14 @@ open class GooglePlacesAPI(val srkLocationBuilder: SRKLocationBuilder) {
         } else {
             return null
         }
+    }
+
+    fun checkPlaceId(): Pair<Boolean, String> {
+
+        if (!TextUtils.isEmpty(srkLocationBuilder.getPlaceId())) {
+            return Pair(true, srkLocationBuilder.getPlaceId().orEmpty())
+        }
+        return Pair(false, PLACE_ID_REQUIRED)
     }
 }
 

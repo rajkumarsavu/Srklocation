@@ -1,4 +1,4 @@
-package com.app.joulez.networklibrary.models.response.location
+package com.srk.srklocationservices.models.nearbyplaces
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName

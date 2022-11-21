@@ -1,8 +1,12 @@
-package com.srk.srklocationservices.ui.locationapis
+package com.srk.srklocationservices.ui.locationapis.nearbysearch
 
-import com.app.joulez.networklibrary.models.response.location.NearBySearchResponse
 import com.srk.srklocationservices.api.RetrofitServiceUtil
+import com.srk.srklocationservices.models.nearbyplaces.NearByPlaceModel
+import com.srk.srklocationservices.models.nearbyplaces.NearBySearchResponse
+import com.srk.srklocationservices.ui.locationapis.GooglePlacesAPI
+import com.srk.srklocationservices.ui.locationapis.SRKLocationBuilder
 import com.srk.srklocationservices.utils.AppConstants.NEAR_PLACES
+import com.srk.srklocationservices.utils.AppConstants.OK
 import com.srk.srklocationservices.utils.AppConstants.SOMETHING_WENT_WRONG
 import retrofit2.Call
 import retrofit2.Callback
@@ -20,7 +24,7 @@ class SRKGoogleNearPlacesAPI(srkLocationBuilder: SRKLocationBuilder) :
         if (key.first) {
             builder.append(PARAM_GOOGLE_KEY).append(key.second)
         } else {
-            throw IllegalArgumentException(key.second);
+            throw IllegalArgumentException(key.second)
         }
 
         //Set location
@@ -52,7 +56,7 @@ class SRKGoogleNearPlacesAPI(srkLocationBuilder: SRKLocationBuilder) :
             }
         }
 
-        //Set opennow
+        //Set open now
         srkLocationBuilder.getOpenNow()?.let {
             builder.append("&").append(PARAM_OPEN_NOW).append(it)
         }
@@ -83,22 +87,28 @@ class SRKGoogleNearPlacesAPI(srkLocationBuilder: SRKLocationBuilder) :
 
     fun getNearSearchPlaces() {
         val listener = srkLocationBuilder.getLocationResultListner()
-        listener?.let { onLocationListner ->
+        listener?.let { onLocationListener ->
             try {
                 val finalConstructedURL = prepareNearByPlacesURL()
-                onLocationListner.onPlaceDetailsFetched(loading())
+                onLocationListener.onLocationDetailsFetched(loading())
                 val response = RetrofitServiceUtil().locationAPIService()
                     .getNearPlaces(NEAR_PLACES.plus(finalConstructedURL))
                 response.enqueue(object : Callback<NearBySearchResponse?> {
                     override fun onResponse(
                         call: Call<NearBySearchResponse?>, response: Response<NearBySearchResponse?>
                     ) {
-                        onLocationListner.onPlaceDetailsFetched(try {
+                        onLocationListener.onLocationDetailsFetched(try {
                             if (response.isSuccessful && response.body() != null) {
                                 val nearBySearchResponse = response.body() as NearBySearchResponse
                                 nearBySearchResponse.status?.let {
-                                    if (it.equals("OK", true)) {
-                                        success(NEAR_PLACES, nearBySearchResponse)
+                                    if (it.equals(OK, true)) {
+                                        if (srkLocationBuilder.getNeedResultInPlaceModelList()) success(
+                                            NEAR_PLACES,
+                                            nearBySearchResponse.toNearByPlaceModelList()
+                                        ) else success(
+                                            NEAR_PLACES, nearBySearchResponse
+                                        )
+
                                     } else {
                                         failure(NEAR_PLACES,
                                             nearBySearchResponse.error_message ?: run { it })
@@ -117,18 +127,40 @@ class SRKGoogleNearPlacesAPI(srkLocationBuilder: SRKLocationBuilder) :
                     }
 
                     override fun onFailure(call: Call<NearBySearchResponse?>, e: Throwable) {
-                        onLocationListner.onPlaceDetailsFetched(
+                        onLocationListener.onLocationDetailsFetched(
                             exception(NEAR_PLACES, e.message.toString())
                         )
                     }
                 })
             } catch (e: Exception) {
-                onLocationListner.onPlaceDetailsFetched(
+                onLocationListener.onLocationDetailsFetched(
                     exception(NEAR_PLACES, e.message.toString())
                 )
             }
         }
 
+    }
+
+    fun NearBySearchResponse.toNearByPlaceModelList(): List<NearByPlaceModel> {
+        val placeModelList: ArrayList<NearByPlaceModel> = arrayListOf()
+        this.results?.let {
+            if (!this.results.isNullOrEmpty()) {
+                for (item in it) {
+                    if (item != null) {
+                        val nearByPlaceModel = NearByPlaceModel().apply {
+                            placeId = item.placeId
+                            locationName = item.name
+                            fullAddress = item.vicinity
+                            locationLat = item.geometry?.location?.lat
+                            locationLong = item.geometry?.location?.lng
+                        }
+                        placeModelList.add(nearByPlaceModel)
+                    }
+                }
+            }
+        }
+
+        return placeModelList
     }
 
 }
