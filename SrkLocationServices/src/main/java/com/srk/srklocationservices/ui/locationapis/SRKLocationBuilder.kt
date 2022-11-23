@@ -1,6 +1,7 @@
 package com.srk.srklocationservices.ui.locationapis
 
 import com.srk.srklocationservices.listners.OnLocationResultListner
+import com.srk.srklocationservices.ui.locationapis.autocomplete.SRKGoogleAutoCompleteSearchAPI
 import com.srk.srklocationservices.ui.locationapis.nearbysearch.SRKGoogleNearPlacesAPI
 
 //FYI Note: Adding both `keyword` and `type` with the same value (`keyword=cafe&type=cafe` or `keyword=parking&type=parking`)
@@ -42,6 +43,7 @@ class SRKLocationBuilder {
      * the language code, indicating in which language the results should be returned,
      * https://developers.google.com/maps/documentation/places/web-service/search-nearby#language
      * https://developers.google.com/maps/documentation/places/web-service/details#language
+     * https://developers.google.com/maps/documentation/places/web-service/autocomplete#language
      */
     private var language: String? = null
     fun getLanguage() = language
@@ -115,8 +117,8 @@ class SRKLocationBuilder {
     private var type: String? = null
     fun getType() = type
 
-    private var needResultInPlaceModelList: Boolean = false
-    fun getNeedResultInPlaceModelList() = needResultInPlaceModelList
+    private var needResultInFormattedModel: Boolean = false
+    fun getNeedResultInFormattedModel() = needResultInFormattedModel
 
     //=====================Place Details========
 
@@ -174,8 +176,50 @@ class SRKLocationBuilder {
     private var sessiontoken: String? = null
     fun getSessiontoken() = sessiontoken
 
-    private var needPlaceDetailsResultInPlaceModel: Boolean = false
-    fun getNeedPlaceDetailsResultInPlaceModel() = needPlaceDetailsResultInPlaceModel
+    //=====================Autcomplete search========
+    /**
+     * REQUIRED
+     * A random string which identifies an autocomplete session for billing purposes.
+     * https://developers.google.com/maps/documentation/places/web-service/autocomplete#input
+     */
+    private var input: String? = null
+    fun getInput() = input
+
+    /**
+     * OPTIONAL
+     * A grouping of places to which you would like to restrict your results.
+     * https://developers.google.com/maps/documentation/places/web-service/autocomplete#components
+     */
+    private var components: String? = null
+    fun getComponents() = components
+
+    /**
+     * OPTIONAL
+     * The position, in the input term, of the last character that the service uses to match predictions.
+     * For example, if the input is Google and the offset is 3, the service will match on Goo.
+     * https://developers.google.com/maps/documentation/places/web-service/autocomplete#offset
+     */
+    private var offset: String? = null
+    fun getOffset() = offset
+
+    /**
+     * OPTIONAL
+     * The origin point from which to calculate straight-line distance to the destination (returned as distance_meters).
+     * If this value is omitted, straight-line distance will not be returned. Must be specified as latitude,longitude.
+     * https://developers.google.com/maps/documentation/places/web-service/autocomplete#origin
+     */
+    private var origin: String? = null
+    fun getOrigin() = origin
+
+    /**
+     * OPTIONAL
+     * Returns only those places that are strictly within the region defined by location and radius.
+     * This is a restriction, rather than a bias, meaning that results outside this region will not be returned even if they match the user input.
+     * https://developers.google.com/maps/documentation/places/web-service/autocomplete#strictbounds
+     */
+    private var strictbounds: Boolean? = null
+    fun getStrictBounds() = strictbounds
+
 
     private var onLocationResultListner: OnLocationResultListner? = null
     fun getLocationResultListner() = onLocationResultListner
@@ -238,7 +282,7 @@ class SRKLocationBuilder {
     }
 
     fun needResultInPlaceModelList(fomatedList: Boolean): SRKLocationBuilder {
-        needResultInPlaceModelList = fomatedList
+        needResultInFormattedModel = fomatedList
         return this
     }
 
@@ -274,10 +318,37 @@ class SRKLocationBuilder {
     }
 
     fun needPlaceDetailsResultInPlaceModel(fomatedList: Boolean): SRKLocationBuilder {
-        needResultInPlaceModelList = fomatedList
+        needResultInFormattedModel = fomatedList
         return this
     }
-    //========================================
+
+    //=====================Auto complete search==========
+    fun input(inputVal: String): SRKLocationBuilder {
+        input = inputVal
+        return this
+    }
+
+    fun components(componentsVal: String?):SRKLocationBuilder{
+        components = componentsVal
+        return this
+    }
+
+    fun offset(offsetVal: String?): SRKLocationBuilder {
+        offset = offsetVal
+        return this
+    }
+
+    fun origin(originVal: String?): SRKLocationBuilder {
+        origin = originVal
+        return this
+    }
+
+    fun strictbounds(strictboundsVal: Boolean): SRKLocationBuilder {
+        strictbounds = strictboundsVal
+        return this
+    }
+
+    //======================
 
     fun onLocationResultListener(onLocationResultListenerValue: OnLocationResultListner): SRKLocationBuilder {
         onLocationResultListner = onLocationResultListenerValue
@@ -291,6 +362,10 @@ class SRKLocationBuilder {
 
     fun buildPlaceDetails(): SRKGoogleNearPlacesAPI {
         return SRKGoogleNearPlacesAPI(this)
+    }
+
+    fun buildAutoCompleteSearch(): SRKGoogleAutoCompleteSearchAPI {
+        return SRKGoogleAutoCompleteSearchAPI(this)
     }
 
 }

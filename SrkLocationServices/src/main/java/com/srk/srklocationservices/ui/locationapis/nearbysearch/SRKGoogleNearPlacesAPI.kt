@@ -1,7 +1,7 @@
 package com.srk.srklocationservices.ui.locationapis.nearbysearch
 
 import com.srk.srklocationservices.api.RetrofitServiceUtil
-import com.srk.srklocationservices.models.nearbyplaces.NearByPlaceModel
+import com.srk.srklocationservices.models.nearbyplaces.FormattedNearByPlaceModel
 import com.srk.srklocationservices.models.nearbyplaces.NearBySearchResponse
 import com.srk.srklocationservices.ui.locationapis.GooglePlacesAPI
 import com.srk.srklocationservices.ui.locationapis.SRKLocationBuilder
@@ -43,7 +43,7 @@ class SRKGoogleNearPlacesAPI(srkLocationBuilder: SRKLocationBuilder) :
             if (it.first) {
                 builder.append("&").append(PARAM_LANGUAGE).append(it.second)
             } else {
-                throw IllegalArgumentException(location.second)
+                throw IllegalArgumentException(it.second)
             }
         }
         //Set min price and max price
@@ -102,9 +102,9 @@ class SRKGoogleNearPlacesAPI(srkLocationBuilder: SRKLocationBuilder) :
                                 val nearBySearchResponse = response.body() as NearBySearchResponse
                                 nearBySearchResponse.status?.let {
                                     if (it.equals(OK, true)) {
-                                        if (srkLocationBuilder.getNeedResultInPlaceModelList()) success(
+                                        if (srkLocationBuilder.getNeedResultInFormattedModel()) success(
                                             NEAR_PLACES,
-                                            nearBySearchResponse.toNearByPlaceModelList()
+                                            nearBySearchResponse.toFormattedNearByPlaceModelList()
                                         ) else success(
                                             NEAR_PLACES, nearBySearchResponse
                                         )
@@ -141,20 +141,20 @@ class SRKGoogleNearPlacesAPI(srkLocationBuilder: SRKLocationBuilder) :
 
     }
 
-    fun NearBySearchResponse.toNearByPlaceModelList(): List<NearByPlaceModel> {
-        val placeModelList: ArrayList<NearByPlaceModel> = arrayListOf()
+    fun NearBySearchResponse.toFormattedNearByPlaceModelList(): List<FormattedNearByPlaceModel> {
+        val placeModelList: ArrayList<FormattedNearByPlaceModel> = arrayListOf()
         this.results?.let {
             if (!this.results.isNullOrEmpty()) {
                 for (item in it) {
                     if (item != null) {
-                        val nearByPlaceModel = NearByPlaceModel().apply {
+                        val formattedNearByPlaceModel = FormattedNearByPlaceModel().apply {
                             placeId = item.placeId
                             locationName = item.name
                             fullAddress = item.vicinity
                             locationLat = item.geometry?.location?.lat
                             locationLong = item.geometry?.location?.lng
                         }
-                        placeModelList.add(nearByPlaceModel)
+                        placeModelList.add(formattedNearByPlaceModel)
                     }
                 }
             }

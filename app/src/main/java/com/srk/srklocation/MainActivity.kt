@@ -1,11 +1,11 @@
 package com.srk.srklocation
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.srk.srklocationservices.listners.OnLocationResultListner
-import com.srk.srklocationservices.models.common.LocationResponse
 import com.srk.srklocationservices.models.common.LocationNetworkStatus
+import com.srk.srklocationservices.models.common.LocationResponse
 import com.srk.srklocationservices.ui.locationapis.SRKLocationBuilder
 
 class MainActivity : AppCompatActivity() {

@@ -1,7 +1,7 @@
 package com.srk.srklocationservices.ui.locationapis.placedetails
 
 import com.srk.srklocationservices.api.RetrofitServiceUtil
-import com.srk.srklocationservices.models.placedetails.PlaceDetailsModel
+import com.srk.srklocationservices.models.placedetails.FormattedPlaceDetailsModel
 import com.srk.srklocationservices.models.placedetails.PlaceDetailsResponse
 import com.srk.srklocationservices.ui.locationapis.GooglePlacesAPI
 import com.srk.srklocationservices.ui.locationapis.SRKLocationBuilder
@@ -13,7 +13,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class SRKPlaceDetailsAPI(srkLocationBuilder: SRKLocationBuilder) :
+class SRKGooglePlaceDetailsAPI(srkLocationBuilder: SRKLocationBuilder) :
     GooglePlacesAPI(srkLocationBuilder) {
 
 
@@ -27,12 +27,12 @@ class SRKPlaceDetailsAPI(srkLocationBuilder: SRKLocationBuilder) :
             throw IllegalArgumentException(key.second)
         }
 
-        //Set location
-        val location = checkPlaceId()
-        if (location.first) {
-            builder.append("&").append(PARAM_PLACE_ID).append(location.second)
+        //Set place id
+        val placeId = checkPlaceId()
+        if (placeId.first) {
+            builder.append("&").append(PARAM_PLACE_ID).append(placeId.second)
         } else {
-            throw IllegalArgumentException(location.second)
+            throw IllegalArgumentException(placeId.second)
         }
         //Set keyword
         srkLocationBuilder.getFields()?.let {
@@ -43,7 +43,7 @@ class SRKPlaceDetailsAPI(srkLocationBuilder: SRKLocationBuilder) :
             if (it.first) {
                 builder.append("&").append(PARAM_LANGUAGE).append(it.second)
             } else {
-                throw IllegalArgumentException(location.second)
+                throw IllegalArgumentException(it.second)
             }
         }
 
@@ -87,9 +87,9 @@ class SRKPlaceDetailsAPI(srkLocationBuilder: SRKLocationBuilder) :
                                 val placeDetailsResponse = response.body() as PlaceDetailsResponse
                                 placeDetailsResponse.status?.let {
                                     if (it.equals(OK, true)) {
-                                        if (srkLocationBuilder.getNeedResultInPlaceModelList()) success(
+                                        if (srkLocationBuilder.getNeedResultInFormattedModel()) success(
                                             PLACE_DETAILS,
-                                            placeDetailsResponse.toPlaceDetailsModel()
+                                            placeDetailsResponse.toFormattedPlaceDetailsModel()
                                         ) else success(
                                             PLACE_DETAILS, placeDetailsResponse
                                         )
@@ -126,11 +126,11 @@ class SRKPlaceDetailsAPI(srkLocationBuilder: SRKLocationBuilder) :
 
     }
 
-    fun PlaceDetailsResponse.toPlaceDetailsModel(): PlaceDetailsModel? {
-        var placeDetailsModel: PlaceDetailsModel? = null
+    fun PlaceDetailsResponse.toFormattedPlaceDetailsModel(): FormattedPlaceDetailsModel? {
+        var formattedPlaceDetailsModel: FormattedPlaceDetailsModel? = null
         this.result?.let { item ->
-            placeDetailsModel = PlaceDetailsModel()
-            placeDetailsModel?.apply {
+            formattedPlaceDetailsModel = FormattedPlaceDetailsModel()
+            formattedPlaceDetailsModel?.apply {
                 placeId = item.placeId
                 name = item.vicinity
                 fullAddress = item.formattedAddress
@@ -167,7 +167,7 @@ class SRKPlaceDetailsAPI(srkLocationBuilder: SRKLocationBuilder) :
                 }
             }
         }
-        return placeDetailsModel
+        return formattedPlaceDetailsModel
     }
 
 }

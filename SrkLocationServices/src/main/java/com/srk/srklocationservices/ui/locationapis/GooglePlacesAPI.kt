@@ -7,6 +7,7 @@ import com.srk.srklocationservices.models.common.CommonResponse
 import com.srk.srklocationservices.models.common.LocationNetworkStatus
 import com.srk.srklocationservices.models.common.LocationResponse
 import com.srk.srklocationservices.utils.AppConstants.GOOGLE_KEY_NOT_FOUND
+import com.srk.srklocationservices.utils.AppConstants.INPUT_REQUIRED
 import com.srk.srklocationservices.utils.AppConstants.INVALID_LANGUAGE
 import com.srk.srklocationservices.utils.AppConstants.LATITUDE_REQUIRED
 import com.srk.srklocationservices.utils.AppConstants.LONGITUDE_REQUIRED
@@ -14,6 +15,7 @@ import com.srk.srklocationservices.utils.AppConstants.PLACE_ID_REQUIRED
 import com.srk.srklocationservices.utils.AppConstants.PRICE_GRATER_THAN_ZERO
 import com.srk.srklocationservices.utils.AppConstants.PRICE_LESS_THAN_FOUR
 import com.srk.srklocationservices.utils.AppConstants.PRICE_MIN_MAX
+import com.srk.srklocationservices.utils.AppConstants.RADIUS_AND_LAT_LANG_REQUIRED_BOTH
 import com.srk.srklocationservices.utils.AppConstants.RADIUS_AND_RANK_BY_CONT_WORK
 import com.srk.srklocationservices.utils.AppConstants.RADIUS_AND_RANK_REQIRED
 import com.srk.srklocationservices.utils.AppConstants.RADIUS_CANT_BE_GRATER
@@ -46,6 +48,12 @@ open class GooglePlacesAPI(val srkLocationBuilder: SRKLocationBuilder) {
     protected var PARAM_REVIEWS_NO_TRANSLATIONS = "reviews_no_translations ="
     protected var PARAM_REVIEWS_SORT = "reviews_sort="
     protected var PARAM_SESSIONTOKEN = "sessiontoken="
+
+    //======Auto complete search======
+    protected var PARAM_INPUT = "input="
+    protected var PARAM_OFF_SET = "offset="
+    protected var PARAM_ORIGIN = "origin="
+    protected var PARAM_STRICTBOUNDS = "strictbounds="
 
     fun loading() = LocationResponse(
         networkStatus = LocationNetworkStatus.LOADING
@@ -166,7 +174,6 @@ open class GooglePlacesAPI(val srkLocationBuilder: SRKLocationBuilder) {
             }
         } else {
             return Triple(false, RADIUS_AND_RANK_REQIRED, "")
-
         }
     }
 
@@ -195,6 +202,35 @@ open class GooglePlacesAPI(val srkLocationBuilder: SRKLocationBuilder) {
             return Pair(true, srkLocationBuilder.getPlaceId().orEmpty())
         }
         return Pair(false, PLACE_ID_REQUIRED)
+    }
+
+    fun checkInput(): Pair<Boolean, String> {
+
+        if (!TextUtils.isEmpty(srkLocationBuilder.getInput())) {
+            return Pair(true, srkLocationBuilder.getInput().orEmpty())
+        }
+        return Pair(false, INPUT_REQUIRED)
+    }
+
+    fun checkStrictBonds(): Triple<Pair<Boolean, Boolean>, String, String> {
+        val radius = srkLocationBuilder.getRadius()
+        val location = locationCheck()
+
+        if (srkLocationBuilder.getStrictBounds() == true) {
+            if (location.first && radius != null) {
+                if (radius > 50000) {
+                    return Triple(Pair(true, false), RADIUS_CANT_BE_GRATER, "")
+                } else if (radius < 1) {
+                    return Triple(Pair(true, false), RADIUS_CANT_BE_LESSER, "")
+                } else {
+                    return Triple(Pair(true, true), location.second, radius.toString())
+                }
+            } else {
+                return Triple(Pair(true, false), RADIUS_AND_LAT_LANG_REQUIRED_BOTH, "")
+            }
+        } else {
+            return Triple(Pair(false, false), RADIUS_AND_LAT_LANG_REQUIRED_BOTH, "")
+        }
     }
 }
 

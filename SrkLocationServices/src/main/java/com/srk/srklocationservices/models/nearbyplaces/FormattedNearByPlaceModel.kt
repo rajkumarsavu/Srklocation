@@ -1,6 +1,6 @@
 package com.srk.srklocationservices.models.nearbyplaces
 
-class NearByPlaceModel {
+class FormattedNearByPlaceModel {
     var placeId: String? = null
     var locationName: String? = null
     var fullAddress: String? = null

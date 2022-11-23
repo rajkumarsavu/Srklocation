@@ -1,6 +1,6 @@
 package com.srk.srklocationservices.models.placedetails
 
-class PlaceDetailsModel {
+class FormattedPlaceDetailsModel {
     var placeId: String? = null
     var name: String? = null
     var fullAddress: String? = null
