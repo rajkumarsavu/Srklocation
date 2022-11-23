@@ -97,33 +97,35 @@ class SRKGoogleNearPlacesAPI(srkLocationBuilder: SRKLocationBuilder) :
                     override fun onResponse(
                         call: Call<NearBySearchResponse?>, response: Response<NearBySearchResponse?>
                     ) {
-                        onLocationListener.onLocationDetailsFetched(try {
-                            if (response.isSuccessful && response.body() != null) {
-                                val nearBySearchResponse = response.body() as NearBySearchResponse
-                                nearBySearchResponse.status?.let {
-                                    if (it.equals(OK, true)) {
-                                        if (srkLocationBuilder.getNeedResultInFormattedModel()) success(
-                                            NEAR_PLACES,
-                                            nearBySearchResponse.toFormattedNearByPlaceModelList()
-                                        ) else success(
-                                            NEAR_PLACES, nearBySearchResponse
-                                        )
+                        onLocationListener.onLocationDetailsFetched(
+                            try {
+                                if (response.isSuccessful && response.body() != null) {
+                                    val nearBySearchResponse =
+                                        response.body() as NearBySearchResponse
+                                    nearBySearchResponse.status?.let {
+                                        if (it.equals(OK, true)) {
+                                            if (srkLocationBuilder.getNeedResultInFormattedModel()) success(
+                                                NEAR_PLACES,
+                                                nearBySearchResponse.toFormattedNearByPlaceModelList()
+                                            ) else success(
+                                                NEAR_PLACES, nearBySearchResponse
+                                            )
 
-                                    } else {
-                                        failure(NEAR_PLACES,
-                                            nearBySearchResponse.error_message ?: run { it })
+                                        } else {
+                                            failure(NEAR_PLACES,
+                                                nearBySearchResponse.error_message ?: run { it })
+                                        }
+                                    } ?: run {
+                                        failure(NEAR_PLACES, SOMETHING_WENT_WRONG)
                                     }
-                                } ?: run {
+                                } else if (response.errorBody() != null) {
+                                    error(NEAR_PLACES, response.errorBody())
+                                } else {
                                     failure(NEAR_PLACES, SOMETHING_WENT_WRONG)
                                 }
-                            } else if (response.errorBody() != null) {
-                                error(NEAR_PLACES, response.errorBody())
-                            } else {
-                                failure(NEAR_PLACES, SOMETHING_WENT_WRONG)
-                            }
-                        } catch (e: Exception) {
-                            exception(NEAR_PLACES, e.message.toString())
-                        })
+                            } catch (e: Exception) {
+                                exception(NEAR_PLACES, e.message.toString())
+                            })
                     }
 
                     override fun onFailure(call: Call<NearBySearchResponse?>, e: Throwable) {
@@ -159,7 +161,6 @@ class SRKGoogleNearPlacesAPI(srkLocationBuilder: SRKLocationBuilder) :
                 }
             }
         }
-
         return placeModelList
     }
 

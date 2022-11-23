@@ -3,6 +3,7 @@ package com.srk.srklocationservices.ui.locationapis
 import com.srk.srklocationservices.listners.OnLocationResultListner
 import com.srk.srklocationservices.ui.locationapis.autocomplete.SRKGoogleAutoCompleteSearchAPI
 import com.srk.srklocationservices.ui.locationapis.nearbysearch.SRKGoogleNearPlacesAPI
+import com.srk.srklocationservices.ui.locationapis.placedetails.SRKGooglePlaceDetailsAPI
 
 //FYI Note: Adding both `keyword` and `type` with the same value (`keyword=cafe&type=cafe` or `keyword=parking&type=parking`)
 // can yield `ZERO_RESULTS`.
@@ -281,8 +282,8 @@ class SRKLocationBuilder {
         return this
     }
 
-    fun needResultInPlaceModelList(fomatedList: Boolean): SRKLocationBuilder {
-        needResultInFormattedModel = fomatedList
+    fun needResultInFormattedModel(formattedList: Boolean): SRKLocationBuilder {
+        needResultInFormattedModel = formattedList
         return this
     }
 
@@ -360,8 +361,8 @@ class SRKLocationBuilder {
         return SRKGoogleNearPlacesAPI(this)
     }
 
-    fun buildPlaceDetails(): SRKGoogleNearPlacesAPI {
-        return SRKGoogleNearPlacesAPI(this)
+    fun buildPlaceDetails(): SRKGooglePlaceDetailsAPI {
+        return SRKGooglePlaceDetailsAPI(this)
     }
 
     fun buildAutoCompleteSearch(): SRKGoogleAutoCompleteSearchAPI {

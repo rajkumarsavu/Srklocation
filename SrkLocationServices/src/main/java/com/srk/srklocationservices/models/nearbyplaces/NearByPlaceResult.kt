@@ -49,7 +49,7 @@ class NearByPlaceResult {
 
     @SerializedName("rating")
     @Expose
-    var rating: Int? = null
+    var rating: String? = null
 
     @SerializedName("opening_hours")
     @Expose
@@ -57,5 +57,5 @@ class NearByPlaceResult {
 
     @SerializedName("price_level")
     @Expose
-    var priceLevel: Int? = null
+    var priceLevel: String? = null
 }

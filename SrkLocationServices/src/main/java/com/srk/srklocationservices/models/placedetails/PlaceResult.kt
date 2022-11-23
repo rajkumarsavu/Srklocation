@@ -61,7 +61,7 @@ class PlaceResult {
 
     @SerializedName("utc_offset")
     @Expose
-    var utcOffset: Int? = null
+    var utcOffset: String? = null
 
     @SerializedName("vicinity")
     @Expose

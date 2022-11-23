@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 class Photo {
     @SerializedName("height")
     @Expose
-    var height: Int? = null
+    var height: String? = null
 
     @SerializedName("html_attributions")
     @Expose
@@ -18,5 +18,5 @@ class Photo {
 
     @SerializedName("width")
     @Expose
-    var width: Int? = null
+    var width: String? = null
 }
