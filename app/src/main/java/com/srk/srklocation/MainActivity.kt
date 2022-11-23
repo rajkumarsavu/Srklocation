@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         srkLocationBuilder.googleApiKey("your api key")
         srkLocationBuilder.locationLatLng(18.294830, 83.89366)
         srkLocationBuilder.radius(9000)
-        srkLocationBuilder.needResultInFormattedModel(true)
+        srkLocationBuilder.needResultInFormattedModel()
         /*  srkLocationBuilder.language("in")
           srkLocationBuilder.minPrice(3)
           srkLocationBuilder.maxPrice(4)
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         val srkLocationBuilder = SRKLocationBuilder()
         srkLocationBuilder.googleApiKey("your api key")
         srkLocationBuilder.placeId(placeId)
-        srkLocationBuilder.needResultInFormattedModel(true)
+        srkLocationBuilder.needResultInFormattedModel()
 
         srkLocationBuilder.onLocationResultListener(object : OnLocationResultListner {
             override fun onLocationDetailsFetched(locationResponse: LocationResponse) {

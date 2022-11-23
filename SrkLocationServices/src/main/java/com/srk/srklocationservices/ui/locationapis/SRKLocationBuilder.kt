@@ -282,8 +282,8 @@ class SRKLocationBuilder {
         return this
     }
 
-    fun needResultInFormattedModel(formattedList: Boolean): SRKLocationBuilder {
-        needResultInFormattedModel = formattedList
+    fun needResultInFormattedModel(): SRKLocationBuilder {
+        needResultInFormattedModel = true
         return this
     }
 
@@ -329,7 +329,7 @@ class SRKLocationBuilder {
         return this
     }
 
-    fun components(componentsVal: String?):SRKLocationBuilder{
+    fun components(componentsVal: String?): SRKLocationBuilder {
         components = componentsVal
         return this
     }
