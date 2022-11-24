@@ -35,14 +35,6 @@ class SRKGoogleAutoCompleteSearchAPI(srkLocationBuilder: SRKLocationBuilder) :
             throw IllegalArgumentException(input.second)
         }
 
-        //Set location
-        val location = locationCheck()
-        if (location.first) {
-            builder.append("&").append(PARAM_LOCATION).append(location.second)
-        } else {
-            throw IllegalArgumentException(location.second)
-        }
-
         //Set offset
         srkLocationBuilder.getOffset()?.let {
             builder.append("&").append(PARAM_OFF_SET).append(it)
@@ -79,7 +71,7 @@ class SRKGoogleAutoCompleteSearchAPI(srkLocationBuilder: SRKLocationBuilder) :
                 }
             } else {
                 val locationCheck = locationCheck()
-                if (location.first) {
+                if (locationCheck.first) {
                     builder.append("&").append(PARAM_LOCATION).append(locationCheck.second)
                 } else {
                     //Nothing will append
@@ -170,7 +162,7 @@ class SRKGoogleAutoCompleteSearchAPI(srkLocationBuilder: SRKLocationBuilder) :
     fun AutoCompleteResponse.toFormattedAutoCompleteList(): List<FormattedAutoCompleteModel> {
         val autoCompleteModelList: ArrayList<FormattedAutoCompleteModel> = arrayListOf()
         this.predictions?.let {
-            if (!this.predictions.isEmpty()) {
+            if (this.predictions.isNotEmpty()) {
                 for (item in it) {
                     val formattedAutoCompleteModel = FormattedAutoCompleteModel().apply {
                         placeId = item.placeId
@@ -183,7 +175,6 @@ class SRKGoogleAutoCompleteSearchAPI(srkLocationBuilder: SRKLocationBuilder) :
                 }
             }
         }
-
         return autoCompleteModelList
     }
 
