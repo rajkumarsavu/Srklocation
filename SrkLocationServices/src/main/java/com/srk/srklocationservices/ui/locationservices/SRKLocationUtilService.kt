@@ -3,6 +3,7 @@ package com.srk.srklocationservices.ui.locationservices
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -148,5 +149,21 @@ class SRKLocationUtilService(private val builder: Builder) {
                 this
             )
         }
+    }
+
+    fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (activityWeakReference.get() == null) return
+        srkPermission.onRequestPermissionsResult(requestCode)
+    }
+
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (activityWeakReference.get() == null) return
+        srkPermission.onActivityResult(requestCode)
+        srkLocationSettingAndRequestHelper.onActivityResult(requestCode, resultCode, data)
+        srkGooglePlayApiHelper.onActivityResult(requestCode)
     }
 }

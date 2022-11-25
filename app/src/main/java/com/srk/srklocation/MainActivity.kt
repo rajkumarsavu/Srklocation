@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         getCurrentLocation()
     }
 
-    fun getCurrentLocation() {
+    private fun getCurrentLocation() {
         SRKLocationUtilService.Builder(this, object : LocationListener {
             override fun locationOn() {
                 Toast.makeText(this@MainActivity, "locationOn", Toast.LENGTH_SHORT).show()
