@@ -183,7 +183,7 @@ open class GooglePlacesAPI(val srkLocationBuilder: SRKLocationBuilder) {
         if (!TextUtils.isEmpty(type)) {
             val someClass: Class<*> = PlaceType::class.java
             try {
-                someClass.getField(type.toString().toUpperCase())
+                someClass.getField(type.toString().uppercase(Locale.getDefault()))
                 return Pair(true, type.orEmpty())
             } catch (e: java.lang.Exception) {
                 return Pair(
