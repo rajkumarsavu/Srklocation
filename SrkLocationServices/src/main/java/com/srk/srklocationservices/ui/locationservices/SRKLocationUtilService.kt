@@ -44,15 +44,16 @@ class SRKLocationUtilService(private val builder: Builder) {
         //Initiate Activity Permission
         srkPermission = SrkActivityPermissions((builder.getContext() as Activity), arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION
-        ), object : SrkLocationPermissionListener {
-            override fun permissionGranted() {
-                srkLocationSettingAndRequestHelper.checkLocationSettingsIfNotShow()
-            }
+        ),
+            object : SrkLocationPermissionListener {
+                override fun permissionGranted() {
+                    srkLocationSettingAndRequestHelper.checkLocationSettingsIfNotShow()
+                }
 
-            override fun permissionDenied() {
-            }
+                override fun permissionDenied() {
+                }
 
-        })
+            })
 
         //Initiate Google play helper
         srkGooglePlayApiHelper =
@@ -75,18 +76,15 @@ class SRKLocationUtilService(private val builder: Builder) {
 
 
     fun getCurrentLocation() {
+        if (activityWeakReference.get() == null) return
         builder.locationFrequently(false)
-        checkAndMakeAvailableGooglePlayServices()
+        srkGooglePlayApiHelper.checkAndMakeAvailableGooglePlayServices()
     }
 
 
     fun getLocationFrequently() {
-        builder.locationFrequently(true)
-    }
-
-
-    private fun checkAndMakeAvailableGooglePlayServices() {
         if (activityWeakReference.get() == null) return
+        builder.locationFrequently(true)
         srkGooglePlayApiHelper.checkAndMakeAvailableGooglePlayServices()
     }
 
@@ -102,6 +100,9 @@ class SRKLocationUtilService(private val builder: Builder) {
         fusedLocationClient.lastLocation.addOnSuccessListener { location -> // Got last known location. In some rare situations this can be null.
             if (location != null) {
                 builder.getLocationListener().currentLocation(location)
+                if (builder.getLocationFrequently()) {
+                    startLocationUpdates()
+                }
             } else {
                 startLocationUpdates()
             }
@@ -113,14 +114,12 @@ class SRKLocationUtilService(private val builder: Builder) {
     }
 
     private fun startLocationUpdates() {
-        srkLocationSettingAndRequestHelper.startLocationUpdates(fusedLocationClient)
+        srkLocationSettingAndRequestHelper.addLifecycleListener(fusedLocationClient)
     }
-
 
     private fun stopLocationUpdates() {
         srkLocationSettingAndRequestHelper.stopLocationUpdates(fusedLocationClient)
     }
-
 
     //Builder
     data class Builder(

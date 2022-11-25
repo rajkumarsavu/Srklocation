@@ -1,10 +1,17 @@
 package com.srk.srklocationservices.ui.locationservices.helper
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Looper
+import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.OnLifecycleEvent
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.srk.srklocationservices.ui.locationservices.LocationEnum
@@ -67,34 +74,58 @@ class SRKLocationSettingAndRequestHelper(
         }
     }
 
+
+    fun addLifecycleListener(fusedLocationClient: FusedLocationProviderClient) {
+        val ref = activityWeakReference.get() ?: return
+        (ref as LifecycleOwner).lifecycle.addObserver(object : LifecycleObserver {
+            @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+            fun connectListener() {
+                if (activityWeakReference.get() == null) return
+                startLocationUpdates(fusedLocationClient)
+            }
+
+            @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+            fun disconnectListener() {
+                if (activityWeakReference.get() == null) return
+                stopLocationUpdates(fusedLocationClient)
+            }
+        })
+    }
+
     fun startLocationUpdates(fusedLocationClient: FusedLocationProviderClient) {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
-                if (activityWeakReference.get() == null) {
-                    return
-                }
+                if (activityWeakReference.get() == null) return
                 for (location in locationResult.locations) {
                     builder.getLocationListener().currentLocation(location)
+                }
+                if (!builder.getLocationFrequently()) {
+                    stopLocationUpdates(fusedLocationClient)
                 }
             }
 
             override fun onLocationAvailability(locationAvailability: LocationAvailability) {
-                if (activityWeakReference.get() == null) {
-                    return
-                }
-
-                if (locationAvailability.isLocationAvailable == false) {
+                if (activityWeakReference.get() == null) return
+                if (!locationAvailability.isLocationAvailable) {
                     builder.getLocationListener()
                         .onFailed(LocationEnum.HIGH_PRECISION_LOCATION_NA_TRY_AGAIN_PREFERABLY_WITH_NETWORK_CONNECTIVITY)
                     locationCallback?.let { fusedLocationClient.removeLocationUpdates(it) }
                 }
             }
         }.apply {
+            if (ActivityCompat.checkSelfPermission(
+                    builder.getContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    builder.getContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                return
+            }
             fusedLocationClient.requestLocationUpdates(
                 getLocationRequest(builder), this, Looper.myLooper()
             )
-
-
         }
     }
 

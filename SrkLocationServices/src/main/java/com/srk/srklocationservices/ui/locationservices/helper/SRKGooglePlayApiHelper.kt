@@ -47,10 +47,7 @@ class SRKGooglePlayApiHelper(
     }
 
     fun onActivityResult(requestCode: Int) {
-        if (weakReference.get() == null) {
-            return
-        }
-
+        if (weakReference.get() == null) return
         if (requestCode == REQUEST_CODE) {
             checkAndMakeAvailableGooglePlayServices()
         }
