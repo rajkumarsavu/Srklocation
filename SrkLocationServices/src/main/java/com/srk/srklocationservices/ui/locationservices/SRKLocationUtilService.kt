@@ -36,9 +36,9 @@ class SRKLocationUtilService(private val builder: Builder) {
                 }
 
                 override fun onFailed(locationEnum: LocationEnum) {
+                    if (activityWeakReference.get() == null) return
+                    builder.getLocationListener().onFailed(locationEnum)
                 }
-
-
             })
 
         //Initiate Activity Permission
@@ -51,6 +51,8 @@ class SRKLocationUtilService(private val builder: Builder) {
                 }
 
                 override fun permissionDenied() {
+                    builder.getLocationListener()
+                        .onFailed(LocationEnum.LOCATION_PERMISSION_NOT_GRANTED)
                 }
 
             })

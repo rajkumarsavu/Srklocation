@@ -19,5 +19,6 @@ interface LocationApiService {
     @GET
     fun getPlaceDetailsByPlaceId(@Url url: String?): Call<PlaceDetailsResponse>
 
-
+    @GET
+    fun getGeoCoding(@Url url: String?): Call<PlaceDetailsResponse>
 }

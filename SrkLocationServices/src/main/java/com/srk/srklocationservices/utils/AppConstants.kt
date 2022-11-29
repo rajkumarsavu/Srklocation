@@ -7,6 +7,7 @@ object AppConstants {
     const val NEAR_PLACES = "api/place/nearbysearch/json?"
     const val SEARCH_PLACES = "api/place/autocomplete/json?"
     const val PLACE_DETAILS = "api/place/details/json?"
+    const val GEOCODING = "api/geocode/json?"
 
     //Messages
     const val GOOGLE_KEY_NOT_FOUND = "Google API key is required"
@@ -26,6 +27,7 @@ object AppConstants {
 
     const val PLACE_ID_REQUIRED = "Place Id required"
     const val INPUT_REQUIRED = "Input value required"
+    const val ADDRESS_REQUIRED = "Address field is required"
 
 
     const val SOMETHING_WENT_WRONG = "Something went wrong"

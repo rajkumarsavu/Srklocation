@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
         //getNearByPlaces()
         //getPlaceDetails("ChIJA9RNruP1OzoROp8kxjO5dNk")
-        //getAutoCompleteSearch("gari")
+        //getAutoCompleteSearch("losan")
 
 
     }

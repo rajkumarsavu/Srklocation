@@ -1,9 +1,12 @@
 package com.srk.srklocationservices.ui.locationapis
 
+import android.content.Context
 import com.srk.srklocationservices.listners.OnLocationResultListner
 import com.srk.srklocationservices.ui.locationapis.autocomplete.SRKGoogleAutoCompleteSearchAPI
+import com.srk.srklocationservices.ui.locationapis.geocoding.SRKGoogleGeoCodingAPI
 import com.srk.srklocationservices.ui.locationapis.nearbysearch.SRKGoogleNearPlacesAPI
 import com.srk.srklocationservices.ui.locationapis.placedetails.SRKGooglePlaceDetailsAPI
+import com.srk.srklocationservices.ui.locationapis.reversegeocoding.SRKGoogleReverseGeoCodingAPI
 
 //FYI Note: Adding both `keyword` and `type` with the same value (`keyword=cafe&type=cafe` or `keyword=parking&type=parking`)
 // can yield `ZERO_RESULTS`.
@@ -221,6 +224,13 @@ class SRKLocationBuilder {
     private var strictbounds: Boolean? = null
     fun getStrictBounds() = strictbounds
 
+    //============= Google Geo coding===================
+    /**
+     * REQUIRED
+     * */
+    private var address: String? = null
+    fun getAddress() = address
+
 
     private var onLocationResultListner: OnLocationResultListner? = null
     fun getLocationResultListner() = onLocationResultListner
@@ -349,7 +359,12 @@ class SRKLocationBuilder {
         return this
     }
 
-    //======================
+    //============= Google Geo coding===================
+
+    fun address(addressVal: String?): SRKLocationBuilder {
+        address = addressVal
+        return this
+    }
 
     fun onLocationResultListener(onLocationResultListenerValue: OnLocationResultListner): SRKLocationBuilder {
         onLocationResultListner = onLocationResultListenerValue
@@ -367,6 +382,14 @@ class SRKLocationBuilder {
 
     fun buildAutoCompleteSearch(): SRKGoogleAutoCompleteSearchAPI {
         return SRKGoogleAutoCompleteSearchAPI(this)
+    }
+
+    fun buildGeoCoding(): SRKGoogleGeoCodingAPI {
+        return SRKGoogleGeoCodingAPI(this)
+    }
+
+    fun buildReverseGeoCoding(): SRKGoogleReverseGeoCodingAPI {
+        return SRKGoogleReverseGeoCodingAPI(this)
     }
 
 }

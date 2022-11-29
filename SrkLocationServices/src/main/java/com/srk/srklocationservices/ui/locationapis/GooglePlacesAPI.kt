@@ -6,6 +6,7 @@ import com.google.gson.reflect.TypeToken
 import com.srk.srklocationservices.models.common.CommonResponse
 import com.srk.srklocationservices.models.common.LocationNetworkStatus
 import com.srk.srklocationservices.models.common.LocationResponse
+import com.srk.srklocationservices.utils.AppConstants.ADDRESS_REQUIRED
 import com.srk.srklocationservices.utils.AppConstants.GOOGLE_KEY_NOT_FOUND
 import com.srk.srklocationservices.utils.AppConstants.INPUT_REQUIRED
 import com.srk.srklocationservices.utils.AppConstants.INVALID_LANGUAGE
@@ -54,6 +55,11 @@ open class GooglePlacesAPI(val srkLocationBuilder: SRKLocationBuilder) {
     protected var PARAM_OFF_SET = "offset="
     protected var PARAM_ORIGIN = "origin="
     protected var PARAM_STRICTBOUNDS = "strictbounds="
+
+    //======Geo coding======
+    protected var PARAM_ADDRESS = "address="
+    //======Geo coding======
+    protected var PARAM_LAT_LNG = "latlng="
 
     fun loading() = LocationResponse(
         networkStatus = LocationNetworkStatus.LOADING
@@ -231,6 +237,14 @@ open class GooglePlacesAPI(val srkLocationBuilder: SRKLocationBuilder) {
         } else {
             return Triple(Pair(false, false), RADIUS_AND_LAT_LANG_REQUIRED_BOTH, "")
         }
+    }
+
+    fun checkAddress(): Pair<Boolean, String> {
+
+        if (!TextUtils.isEmpty(srkLocationBuilder.getAddress())) {
+            return Pair(true, srkLocationBuilder.getAddress().orEmpty())
+        }
+        return Pair(false, ADDRESS_REQUIRED)
     }
 }
 
