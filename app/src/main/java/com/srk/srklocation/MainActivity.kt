@@ -193,7 +193,7 @@ class MainActivity : AppCompatActivity() {
     private fun getReverseGeoCoding() {
 
         val srkLocationBuilder = SRKLocationBuilder()
-        srkLocationBuilder.googleApiKey("AIzaSyClDhOnLiteNmmcsDjWcUbNB_NQp2iGb4U")
+        srkLocationBuilder.googleApiKey("your api key")
         srkLocationBuilder.locationLatLng(18.294830, 83.89366)
         srkLocationBuilder.needResultInFormattedModel()
         /*  srkLocationBuilder.language("in")
