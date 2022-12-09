@@ -23,12 +23,12 @@ class MainActivity : AppCompatActivity() {
         //getPlaceDetails("ChIJA9RNruP1OzoROp8kxjO5dNk")
         //getAutoCompleteSearch("losan")
 
-
+        getReverseGeoCoding()
     }
 
     override fun onResume() {
         super.onResume()
-        getCurrentLocation()
+        //getCurrentLocation()
     }
 
     private fun getCurrentLocation() {
@@ -188,5 +188,54 @@ class MainActivity : AppCompatActivity() {
             }
         }).buildPlaceDetails().getPlaceDetails()
 
+    }
+
+    private fun getReverseGeoCoding() {
+
+        val srkLocationBuilder = SRKLocationBuilder()
+        srkLocationBuilder.googleApiKey("AIzaSyClDhOnLiteNmmcsDjWcUbNB_NQp2iGb4U")
+        srkLocationBuilder.locationLatLng(18.294830, 83.89366)
+        srkLocationBuilder.needResultInFormattedModel()
+        /*  srkLocationBuilder.language("in")
+          srkLocationBuilder.minPrice(3)
+          srkLocationBuilder.maxPrice(4)
+          srkLocationBuilder.type("gas_station")*/
+
+        srkLocationBuilder.onLocationResultListener(object : OnLocationResultListner {
+            override fun onLocationDetailsFetched(locationResponse: LocationResponse) {
+                when (locationResponse.networkStatus) {
+                    LocationNetworkStatus.LOADING -> {
+                        Toast.makeText(this@MainActivity, "loading", Toast.LENGTH_SHORT).show()
+                    }
+                    LocationNetworkStatus.SUCCESS -> {
+                        val nearList =
+                            locationResponse.response as FormattedPlaceDetailsModel
+
+                        Toast.makeText(
+                            this@MainActivity, "SUCCESS+" + nearList.fullAddress, Toast.LENGTH_SHORT
+                        ).show()
+
+
+                    }
+                    LocationNetworkStatus.ERROR_OR_FAIL -> {
+                        Toast.makeText(
+                            this@MainActivity,
+                            "ERROR" + locationResponse.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    LocationNetworkStatus.EXCEPTION -> {
+                        Toast.makeText(
+                            this@MainActivity,
+                            "EXCEPTION" + locationResponse.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    else -> {
+
+                    }
+                }
+            }
+        }).buildReverseGeoCoding().getReverseGeoCoding()
     }
 }

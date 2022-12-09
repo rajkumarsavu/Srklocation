@@ -1,10 +1,11 @@
 package com.srk.srklocationservices.ui.locationapis.reversegeocoding
 
 import com.srk.srklocationservices.api.RetrofitServiceUtil
+import com.srk.srklocationservices.models.geocoding.GeoCodingResponse
 import com.srk.srklocationservices.models.placedetails.FormattedPlaceDetailsModel
-import com.srk.srklocationservices.models.placedetails.PlaceDetailsResponse
 import com.srk.srklocationservices.ui.locationapis.GooglePlacesAPI
 import com.srk.srklocationservices.ui.locationapis.SRKLocationBuilder
+import com.srk.srklocationservices.utils.AppConstants
 import com.srk.srklocationservices.utils.AppConstants.GEOCODING
 import com.srk.srklocationservices.utils.AppConstants.OK
 import com.srk.srklocationservices.utils.AppConstants.SOMETHING_WENT_WRONG
@@ -38,6 +39,7 @@ class SRKGoogleReverseGeoCodingAPI(srkLocationBuilder: SRKLocationBuilder) :
         return builder.toString()
     }
 
+
     fun getReverseGeoCoding() {
         val listener = srkLocationBuilder.getLocationResultListner()
         listener?.let { onLocationListener ->
@@ -46,24 +48,32 @@ class SRKGoogleReverseGeoCodingAPI(srkLocationBuilder: SRKLocationBuilder) :
                 onLocationListener.onLocationDetailsFetched(loading())
                 val response = RetrofitServiceUtil().locationAPIService()
                     .getGeoCoding(GEOCODING.plus(finalConstructedURL))
-                response.enqueue(object : Callback<PlaceDetailsResponse?> {
+                response.enqueue(object : Callback<GeoCodingResponse?> {
                     override fun onResponse(
-                        call: Call<PlaceDetailsResponse?>,
-                        response: Response<PlaceDetailsResponse?>
+                        call: Call<GeoCodingResponse?>, response: Response<GeoCodingResponse?>
                     ) {
                         onLocationListener.onLocationDetailsFetched(try {
                             if (response.isSuccessful && response.body() != null) {
-                                val placeDetailsResponse =
-                                    response.body() as PlaceDetailsResponse
+                                val placeDetailsResponse = response.body() as GeoCodingResponse
                                 placeDetailsResponse.status?.let {
                                     if (it.equals(OK, true)) {
-                                        if (srkLocationBuilder.getNeedResultInFormattedModel()) success(
-                                            GEOCODING,
-                                            placeDetailsResponse.toFormattedPlaceDetailsModel()
-                                        ) else success(
-                                            GEOCODING, placeDetailsResponse
-                                        )
-
+                                        if (srkLocationBuilder.getNeedResultInFormattedModel()) {
+                                            val formatResponse =
+                                                placeDetailsResponse.toFormattedPlaceDetailsModel()
+                                            if (formatResponse != null) {
+                                                success(
+                                                    GEOCODING,
+                                                    formatResponse
+                                                )
+                                            } else {
+                                                failure(
+                                                    GEOCODING,
+                                                    AppConstants.FORMATTED_MODEL_FAILURE
+                                                )
+                                            }
+                                        } else {
+                                            success(GEOCODING, placeDetailsResponse)
+                                        }
                                     } else {
                                         failure(GEOCODING,
                                             placeDetailsResponse.error_message ?: run { it })
@@ -81,7 +91,7 @@ class SRKGoogleReverseGeoCodingAPI(srkLocationBuilder: SRKLocationBuilder) :
                         })
                     }
 
-                    override fun onFailure(call: Call<PlaceDetailsResponse?>, e: Throwable) {
+                    override fun onFailure(call: Call<GeoCodingResponse?>, e: Throwable) {
                         onLocationListener.onLocationDetailsFetched(
                             exception(GEOCODING, e.message.toString())
                         )
@@ -96,48 +106,69 @@ class SRKGoogleReverseGeoCodingAPI(srkLocationBuilder: SRKLocationBuilder) :
 
     }
 
-    fun PlaceDetailsResponse.toFormattedPlaceDetailsModel(): FormattedPlaceDetailsModel? {
+
+    fun GeoCodingResponse.toFormattedPlaceDetailsModel(): FormattedPlaceDetailsModel? {
         var formattedPlaceDetailsModel: FormattedPlaceDetailsModel? = null
-        this.result?.let { item ->
+        this.results?.let { result ->
             formattedPlaceDetailsModel = FormattedPlaceDetailsModel()
             formattedPlaceDetailsModel?.apply {
-                placeId = item.placeId
-                name = item.vicinity
-                fullAddress = item.formattedAddress
-                locationLat = item.geometry?.location?.lat
-                locationLong = item.geometry?.location?.lng
-                item.addressComponents?.let {
-                    for (address in it) {
-                        val type = address.types?.first()
-                        type?.let { typeAddress ->
-                            if (typeAddress.equals("locality", true)) {
-                                locality = address.longName
-                                localityShort = address.shortName
-                            } else if (typeAddress.equals("sublocality", true)) {
-                                sublocality = address.longName
-                                sublocalityShort = address.shortName
-                            } else if (typeAddress.equals("administrative_area_level_3", true)) {
-                                city = address.longName
-                                cityShort = address.shortName
-                            } else if (typeAddress.equals("administrative_area_level_2", true)) {
-                                country = address.longName
-                                countryShort = address.shortName
-                            } else if (typeAddress.equals("administrative_area_level_1", true)) {
-                                state = address.longName
-                                stateShort = address.shortName
-                            } else if (typeAddress.equals("country", true)) {
-                                country = address.longName
-                                countryShort = address.shortName
-                            } else if (typeAddress.equals("postal_code", true)) {
-                                postal_code = address.longName
-                                postal_codeShort = address.shortName
+                if (result.size > 0) {
+                    val item = result.first()
+                    item?.let {
+                        placeId = item.placeId
+                        name = item.vicinity
+                        fullAddress = item.formattedAddress
+                        locationLat = item.geometry?.location?.lat
+                        locationLong = item.geometry?.location?.lng
+                        item.addressComponents?.let {
+                            for (address in it) {
+                                val type = address.types?.first()
+                                type?.let { typeAddress ->
+                                    if (typeAddress.equals("locality", true)) {
+                                        locality = address.longName
+                                        localityShort = address.shortName
+                                    } else if (typeAddress.equals("sublocality", true)) {
+                                        sublocality = address.longName
+                                        sublocalityShort = address.shortName
+                                    } else if (typeAddress.equals(
+                                            "administrative_area_level_3",
+                                            true
+                                        )
+                                    ) {
+                                        city = address.longName
+                                        cityShort = address.shortName
+                                    } else if (typeAddress.equals(
+                                            "administrative_area_level_2",
+                                            true
+                                        )
+                                    ) {
+                                        country = address.longName
+                                        countryShort = address.shortName
+                                    } else if (typeAddress.equals(
+                                            "administrative_area_level_1",
+                                            true
+                                        )
+                                    ) {
+                                        state = address.longName
+                                        stateShort = address.shortName
+                                    } else if (typeAddress.equals("country", true)) {
+                                        country = address.longName
+                                        countryShort = address.shortName
+                                    } else if (typeAddress.equals("postal_code", true)) {
+                                        postal_code = address.longName
+                                        postal_codeShort = address.shortName
+                                    }
+                                }
                             }
                         }
                     }
+
                 }
+
             }
         }
         return formattedPlaceDetailsModel
     }
+
 
 }

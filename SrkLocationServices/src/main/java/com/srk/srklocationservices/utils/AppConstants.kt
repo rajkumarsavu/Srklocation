@@ -31,6 +31,8 @@ object AppConstants {
 
 
     const val SOMETHING_WENT_WRONG = "Something went wrong"
+    const val FORMATTED_MODEL_FAILURE = "Exception occurs while requested format model please use actual object"
+
     const val OK = "OK"
 
 }

@@ -1,6 +1,7 @@
 package com.srk.srklocationservices.api
 
 import com.srk.srklocationservices.models.autocomplete.AutoCompleteResponse
+import com.srk.srklocationservices.models.geocoding.GeoCodingResponse
 import com.srk.srklocationservices.models.nearbyplaces.NearBySearchResponse
 import com.srk.srklocationservices.models.placedetails.PlaceDetailsResponse
 import retrofit2.Call
@@ -20,5 +21,5 @@ interface LocationApiService {
     fun getPlaceDetailsByPlaceId(@Url url: String?): Call<PlaceDetailsResponse>
 
     @GET
-    fun getGeoCoding(@Url url: String?): Call<PlaceDetailsResponse>
+    fun getGeoCoding(@Url url: String?): Call<GeoCodingResponse>
 }

@@ -5,6 +5,7 @@ import com.srk.srklocationservices.models.placedetails.FormattedPlaceDetailsMode
 import com.srk.srklocationservices.models.placedetails.PlaceDetailsResponse
 import com.srk.srklocationservices.ui.locationapis.GooglePlacesAPI
 import com.srk.srklocationservices.ui.locationapis.SRKLocationBuilder
+import com.srk.srklocationservices.utils.AppConstants.FORMATTED_MODEL_FAILURE
 import com.srk.srklocationservices.utils.AppConstants.OK
 import com.srk.srklocationservices.utils.AppConstants.PLACE_DETAILS
 import com.srk.srklocationservices.utils.AppConstants.SOMETHING_WENT_WRONG
@@ -87,13 +88,17 @@ class SRKGooglePlaceDetailsAPI(srkLocationBuilder: SRKLocationBuilder) :
                                 val placeDetailsResponse = response.body() as PlaceDetailsResponse
                                 placeDetailsResponse.status?.let {
                                     if (it.equals(OK, true)) {
-                                        if (srkLocationBuilder.getNeedResultInFormattedModel()) success(
-                                            PLACE_DETAILS,
-                                            placeDetailsResponse.toFormattedPlaceDetailsModel()
-                                        ) else success(
-                                            PLACE_DETAILS, placeDetailsResponse
-                                        )
-
+                                        if (srkLocationBuilder.getNeedResultInFormattedModel()) {
+                                            val formatResponse =
+                                                placeDetailsResponse.toFormattedPlaceDetailsModel()
+                                            if (formatResponse != null) {
+                                                success(PLACE_DETAILS, formatResponse)
+                                            } else {
+                                                failure(PLACE_DETAILS, FORMATTED_MODEL_FAILURE)
+                                            }
+                                        } else {
+                                            success(PLACE_DETAILS, placeDetailsResponse)
+                                        }
                                     } else {
                                         failure(PLACE_DETAILS,
                                             placeDetailsResponse.error_message ?: run { it })
