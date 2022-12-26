@@ -110,9 +110,9 @@ open class GooglePlacesAPI(val srkLocationBuilder: SRKLocationBuilder) {
     }
 
     fun locationCheck(): Pair<Boolean, String> {
-        if (srkLocationBuilder.getLatitude() <= 0) {
+        if (srkLocationBuilder.getLatitude() == 0.0) {
             return Pair(false, LATITUDE_REQUIRED)
-        } else if (srkLocationBuilder.getLongitude() <= 0) {
+        } else if (srkLocationBuilder.getLongitude() == 0.0) {
             return Pair(false, LONGITUDE_REQUIRED)
         } else return Pair(
             true,

@@ -24,11 +24,11 @@ class SRKLocationBuilder {
      * This must be specified as latitude,longitude.
      * https://developers.google.com/maps/documentation/places/web-service/search-nearby#location
      */
-    private var latitude = -1.0
+    private var latitude = 0.0
     fun getLatitude() = latitude
 
     //Required
-    private var longitude = -1.0
+    private var longitude = 0.0
     fun getLongitude() = longitude
 
 
